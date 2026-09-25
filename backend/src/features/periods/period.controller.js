@@ -3,7 +3,8 @@
 import {
     getAllPeriodsService,
     getPeriodByIdService,
-    createPeriodService
+    createPeriodService,
+    updatePeriodService
 } from "./period.service.js";
 
 // GET ALL PERIODS.
@@ -100,3 +101,48 @@ export const createPeriod = async (req, res) => {
         });
     }
 };
+
+// UPDATE PERIOD.
+export const updatePeriod = async (req, res) => {
+    try {
+        // Get data.
+        const periodId = req.params.id;
+        const { period_name, start_date, end_date, status } = req.body;
+
+        // Validate data.
+        if (!period_name || typeof period_name !== 'string' || !start_date || typeof start_date !== 'string' || !end_date || typeof end_date !== 'string' || !status || typeof status !== 'string') {
+            return res.status(400).json({
+                status: "error",
+                code: "INVALID_DATA",
+                message: "period_name, start_date, end_date and status is required."
+            });
+        }
+
+        // Process.
+        const result = await updatePeriodService(periodId, req.body);
+
+        if (!result) {
+            return res.status(404).json({
+                status: "error",
+                code: "PERIOD_NOT_FOUND",
+                message: "Period not found."
+            })
+        }
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Period is Updated!",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to update period."
+        });
+    }
+}

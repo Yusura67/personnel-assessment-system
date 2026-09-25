@@ -39,5 +39,26 @@ export const createPeriodService = async (periodData) => {
 };
 
 // UPDATE PERIOD.
+export const updatePeriodService = async (periodId, periodData) => {
+    const { period_name, start_date, end_date, status } = periodData;
+
+    const [ result ] = await pool.query(
+        "UPDATE evaluation_period SET period_name = ?, start_date = ?, end_date = ?, status = ? WHERE period_id = ?",
+        [ period_name, start_date, end_date, status, periodId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return {
+        period_id: periodId,
+        period_name,
+        start_date,
+        end_date,
+        status
+    };
+};
+
 // GET ACTIVE PERIOD.
 // DELETE PERIOD.
