@@ -22,6 +22,22 @@ export const getPeriodByIdService = async (periodId) => {
 };
 
 // CREATE PERIOD.
+export const createPeriodService = async (periodData) => {
+    const { period_name, start_date, end_date, status = 'closed' } = periodData;
+
+    const [ result ] = await pool.query(
+        'INSERT INTO evaluation_period(period_name, start_date, end_date, status) VALUES(?, ?, ?, ?)',
+        [ period_name, start_date, end_date, status ]
+    );
+    return {
+        period_id: result.insertId,
+        period_name,
+        start_date,
+        end_date,
+        status
+    };
+};
+
 // UPDATE PERIOD.
 // GET ACTIVE PERIOD.
 // DELETE PERIOD.
