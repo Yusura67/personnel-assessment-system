@@ -11,6 +11,7 @@ import { globalErrorHandler } from './middlewares/errorHandler.js';
 // IMPORT ROUTES.
 import authRoutes from './features/auth/auth.route.js';
 import periodRoutes from './features/periods/period.route.js';
+import indicatorRoutes from './features/indicators/indicator.router.js';
 
 // CONFIGURATION & VARIABLE.
 const app = express();
@@ -24,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 // ROUTES.
 app.use('/api/auth', authRoutes);
 app.use('/api/periods', periodRoutes);
-// app.use('/api/indicators', indicatorRoutes);
+app.use('/api/indicators', indicatorRoutes);
 // app.use('/api/users', userRoutes);
 // app.use('/api/assignments', assignmentRoutes);
 // app.use('/api/evaluations', evaluationRoutes);
