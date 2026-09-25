@@ -20,6 +20,24 @@ export const createTopicService = async (topicData) => {
 };
 
 // CRATE INDICATOR.
+export const createIndicatorService = async (indicatorData) => {
+    const { indicator_name, description, weight, eval_type, period_id, topic_id } = indicatorData;
+
+    const [ result ] = await pool.query(
+        'INSERT INTO indicator(indicator_name, description, weight, eval_type, period_id, topic_id) VALUES (?, ?, ?, ?, ?, ?)',
+        [ indicator_name, description || null, weight, eval_type, period_id, topic_id ]
+    );
+    return {
+        indicator_id: result.insertId,
+        indicator_name,
+        description: description || null,
+        weight,
+        eval_type,
+        period_id,
+        topic_id
+    };
+};
+
 // GET TOPICS WITH INDICATORS.
 // DELETE TOPIC.
 // DELETE INDICATOR.

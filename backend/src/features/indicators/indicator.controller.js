@@ -1,6 +1,6 @@
 // src/features/indicators/indicator.controller.js
 // IMPORT MODULE.
-import { createTopicService } from "./indicator.service.js";
+import { createTopicService, createIndicatorService } from "./indicator.service.js";
 
 // CREATE TOPIC.
 export const createTopic = async (req, res) => {
@@ -33,6 +33,40 @@ export const createTopic = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to create topic."
+        });
+    }
+};
+
+// CREATE INDICATOR.
+export const createIndicator = async (req, res) => {
+    try {
+        const { indicator_name, weight, eval_type, period_id, topic_id } = req.body;
+
+        if (!indicator_name || weight === undefined || !eval_type || !period_id || !topic_id) {
+            return res.status(400).json({
+                status: "error",
+                code: "INVALID_DATA",
+                message: "indicator_name, weight, eval_type, period_id and topic_id is required."
+            });
+        }
+
+        // Process.
+        const result = await createIndicatorService(req.body);
+
+        // Return Result.
+        return res.status(201).json({
+            status: "success",
+            message: "Indicator is Created!",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create indicator."
         });
     }
 };
