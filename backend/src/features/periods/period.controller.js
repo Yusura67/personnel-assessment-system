@@ -73,7 +73,7 @@ export const createPeriod = async (req, res) => {
         const { period_name, start_date, end_date, status } = req.body;
 
         // Validate data.
-        if (!period_name || typeof period_name !== 'string' || !start_date || !end_date || !status || typeof status !== 'string') {
+        if (!period_name || typeof period_name !== 'string' || !start_date || typeof start_date !== 'string' || !end_date || typeof end_date !== 'string' || !status || typeof status !== 'string') {
             return res.status(400).json({
                 status: "error",
                 code: "INVALID_DATA",
