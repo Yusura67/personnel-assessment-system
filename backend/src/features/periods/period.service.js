@@ -13,6 +13,14 @@ export const getAllPeriodsService = async () => {
 }
 
 // GET PERIOD BY ID.
+export const getPeriodByIdService = async (periodId) => {
+    const [ rows ] = await pool.query(
+        'SELECT * FROM evaluation_period WHERE period_id = ?',
+        [ periodId ]
+    );
+    return rows[0] || null;
+};
+
 // CREATE PERIOD.
 // UPDATE PERIOD.
 // GET ACTIVE PERIOD.
