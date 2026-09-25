@@ -61,4 +61,11 @@ export const updatePeriodService = async (periodId, periodData) => {
 };
 
 // GET ACTIVE PERIOD.
+export const getActivePeriodService = async () => {
+    const [ rows ] = await pool.query(
+        "SELECT * FROM evaluation_period WHERE status = 'active' AND CURDATE() BETWEEN start_date AND end_date"
+    );
+    return rows;
+}
+
 // DELETE PERIOD.

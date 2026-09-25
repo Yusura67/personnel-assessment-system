@@ -4,7 +4,8 @@ import {
     getAllPeriodsService,
     getPeriodByIdService,
     createPeriodService,
-    updatePeriodService
+    updatePeriodService,
+    getActivePeriodService
 } from "./period.service.js";
 
 // GET ALL PERIODS.
@@ -143,6 +144,30 @@ export const updatePeriod = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to update period."
+        });
+    }
+};
+
+// GET ACTIVE PERIOD.
+export const getActivePeriod = async (req, res) => {
+    try {
+        // Process.
+        const result = await getActivePeriodService();
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Active Period is Fetched!",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to get active period."
         });
     }
 }

@@ -4,13 +4,13 @@ import express from 'express';
 import { verifyToken } from '../../middlewares/verifyToken.js';
 import { isAdmin } from '../../middlewares/checkRole.js';
 
-import { getAllPeriods, getPeriodById, createPeriod, updatePeriod } from './period.controller.js';
+import { getAllPeriods, getPeriodById, createPeriod, updatePeriod, getActivePeriod } from './period.controller.js';
 
 // INITIALIZE ROUTER.
 const router = express.Router();
 
 // ROUTES.
-// router.get('/active', verifyToken, getActivePeriod);
+router.get('/active', verifyToken, getActivePeriod);
 router.get('/', verifyToken, isAdmin, getAllPeriods);
 router.get('/:id', verifyToken, isAdmin, getPeriodById);
 router.post('/', verifyToken, isAdmin, createPeriod);
