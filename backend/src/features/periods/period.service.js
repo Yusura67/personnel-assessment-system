@@ -66,6 +66,18 @@ export const getActivePeriodService = async () => {
         "SELECT * FROM evaluation_period WHERE status = 'active' AND CURDATE() BETWEEN start_date AND end_date"
     );
     return rows;
-}
+};
 
 // DELETE PERIOD.
+export const deletePeriodService = async (periodId) => {
+    const [ result ] = await pool.query(
+        'DELETE FROM evaluation_period WHERE period_id = ?',
+        [ periodId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return result;
+};

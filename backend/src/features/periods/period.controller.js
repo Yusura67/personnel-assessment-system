@@ -5,7 +5,8 @@ import {
     getPeriodByIdService,
     createPeriodService,
     updatePeriodService,
-    getActivePeriodService
+    getActivePeriodService,
+    deletePeriodService
 } from "./period.service.js";
 
 // GET ALL PERIODS.
@@ -170,4 +171,39 @@ export const getActivePeriod = async (req, res) => {
             message: "Failed to get active period."
         });
     }
-}
+};
+
+// DELETE PERIOD.
+export const deletePeriod = async (req, res) => {
+    try {
+        // Get data.
+        const periodId = req.params.id;
+
+        // Process.
+        const result = await deletePeriodService(periodId);
+
+        if (!result) {
+            return res.status(404).json({
+                status: "error",
+                code: "PERIOD_NOT_FOUND",
+                message: "Period not found."
+            })
+        }
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Period was deleted.",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to delete period."
+        });
+    }
+};
