@@ -1,6 +1,6 @@
 // src/features/assignments/assignment.controller.js
 // IMPORT MODULE.
-import { createAssignmentService } from "./assignment.service.js";
+import { createAssignmentService, getAssignmentByPeriodService } from "./assignment.service.js";
 
 // CREATE ASSIGNMENT.
 export const createAssignment = async (req, res) => {
@@ -34,6 +34,33 @@ export const createAssignment = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to create assignment."
+        });
+    }
+};
+
+// GET ASSIGNMENT BY PERIOD.
+export const getAssignmentByPeriod = async (req, res) => {
+    try {
+        const periodId = req.params.id;
+
+        // Process.
+        const result = await getAssignmentByPeriodService(periodId);
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Assignment is Fetched!",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+  
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to get assignment."
         });
     }
 };
