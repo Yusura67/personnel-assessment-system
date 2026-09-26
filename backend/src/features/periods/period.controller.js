@@ -72,14 +72,14 @@ export const getPeriodById = async (req, res) => {
 export const createPeriod = async (req, res) => {
     try {
         // Get data from user.
-        const { period_name, start_date, end_date, status } = req.body;
+        const { period_name, start_date, end_date } = req.body;
 
         // Validate data.
-        if (!period_name || typeof period_name !== 'string' || !start_date || typeof start_date !== 'string' || !end_date || typeof end_date !== 'string' || !status || typeof status !== 'string') {
+        if (!period_name || typeof period_name !== 'string' || !start_date || typeof start_date !== 'string' || !end_date || typeof end_date !== 'string') {
             return res.status(400).json({
                 status: "error",
                 code: "INVALID_DATA",
-                message: "period_name, start_date, end_date and status is required."
+                message: "period_name, start_date and end_date is required."
             });
         }
 

@@ -23,18 +23,18 @@ export const getPeriodByIdService = async (periodId) => {
 
 // CREATE PERIOD.
 export const createPeriodService = async (periodData) => {
-    const { period_name, start_date, end_date, status = 'closed' } = periodData;
+    const { period_name, start_date, end_date } = periodData;
 
     const [ result ] = await pool.query(
         'INSERT INTO evaluation_period(period_name, start_date, end_date, status) VALUES(?, ?, ?, ?)',
-        [ period_name, start_date, end_date, status ]
+        [ period_name, start_date, end_date, 'closed' ]
     );
     return {
         period_id: result.insertId,
         period_name,
         start_date,
         end_date,
-        status
+        status: 'closed'
     };
 };
 
