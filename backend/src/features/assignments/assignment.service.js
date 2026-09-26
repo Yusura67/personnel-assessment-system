@@ -55,4 +55,21 @@ export const getMyEvaluateeService = async (evaluatorId, periodId) => {
 };
 
 // REQUEST RE EVALUATION.
+export const requestReEvaluationService = async (assignmentId, evaluateeId) => {
+    const [ result ] = await pool.query(
+        "UPDATE assignment SET status = 're_evaluate_requested' WHERE assignment_id = ? AND evaluatee_id = ?",
+        [ assignmentId, evaluateeId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return {
+        assignment_id: assignmentId,
+        evaluatee_id: evaluateeId,
+        status: 're_evaluate_requested'
+    };
+};
+
 // DELETE ASSIGNMENT.

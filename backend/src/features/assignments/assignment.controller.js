@@ -1,6 +1,6 @@
 // src/features/assignments/assignment.controller.js
 // IMPORT MODULE.
-import { createAssignmentService, getAssignmentByPeriodService, getMyEvaluateeService } from "./assignment.service.js";
+import { createAssignmentService, getAssignmentByPeriodService, getMyEvaluateeService, requestReEvaluationService } from "./assignment.service.js";
 
 // CREATE ASSIGNMENT.
 export const createAssignment = async (req, res) => {
@@ -89,6 +89,42 @@ export const getMyEvaluatee = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to get evaluatee."
+        });
+    }
+};
+
+// REQUEST RE EVALUATION.
+export const requestReEvaluation = async (req, res) => {
+    try {
+        const assignmentId = req.params.id;
+        const evaluateeId = req.user.user_id;
+
+        // Process.
+        const result = await requestReEvaluationService(assignmentId, evaluateeId);
+
+        if (!result) {
+            return res.status(404).json({
+                status: "error",
+                code: "DATA_NOT_FOUND",
+                message: "assignment_id or evaluatee_id not found."
+            });
+        }
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Request re evaluation!",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+  
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to request re evaluation."
         });
     }
 };

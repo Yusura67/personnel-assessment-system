@@ -4,7 +4,7 @@ import express from 'express';
 import { verifyToken } from '../../middlewares/verifyToken.js';
 import { isAdmin, isEvaluatee, isEvaluator } from '../../middlewares/checkRole.js';
 
-import { createAssignment, getAssignmentByPeriod, getMyEvaluatee } from './assignment.controller.js';
+import { createAssignment, getAssignmentByPeriod, getMyEvaluatee, requestReEvaluation } from './assignment.controller.js';
 // INITIALIZE ROUTER.
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.post('/', verifyToken, isAdmin, createAssignment);
 router.get('/period/:id', verifyToken, isAdmin, getAssignmentByPeriod);
 router.get('/my-evaluatees/:id', verifyToken, isEvaluator, getMyEvaluatee);
-// router.put('/:id/re-evaluate', verifyToken, isEvaluatee, requestReEvaluation);
+router.put('/:id/re-evaluate', verifyToken, isEvaluatee, requestReEvaluation);
 // router.delete('/:id', verifyToken, isAdmin, deleteAssignment);
 
 // EXPORT ROUTER.
