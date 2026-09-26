@@ -83,4 +83,17 @@ export const signEvaluationService = async (assignmentData) => {
 };
 
 // CANCLE SIGNATURE.
+export const cancleSignatureService = async (assignmentId) => {
+    const [ result ] = await pool.query(
+        "UPDATE assignment SET signature_path = NULL, overall_comment = NULL, status = 'evaluating' WHERE assignment_id = ?",
+        [ assignmentId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return result;
+};
+
 // GET SELF ASSIGNMENT DEAIL.
