@@ -73,3 +73,15 @@ export const requestReEvaluationService = async (assignmentId, evaluateeId) => {
 };
 
 // DELETE ASSIGNMENT.
+export const deleteAssignmentService = async (assignmentId) => {
+    const [ result ] = await pool.query(
+        'DELETE FROM assignment WHERE assignment_id = ?',
+        [ assignmentId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return true;
+};

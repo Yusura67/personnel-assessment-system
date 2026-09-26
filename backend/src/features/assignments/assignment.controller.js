@@ -1,6 +1,6 @@
 // src/features/assignments/assignment.controller.js
 // IMPORT MODULE.
-import { createAssignmentService, getAssignmentByPeriodService, getMyEvaluateeService, requestReEvaluationService } from "./assignment.service.js";
+import { createAssignmentService, getAssignmentByPeriodService, getMyEvaluateeService, requestReEvaluationService, deleteAssignmentService } from "./assignment.service.js";
 
 // CREATE ASSIGNMENT.
 export const createAssignment = async (req, res) => {
@@ -125,6 +125,41 @@ export const requestReEvaluation = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to request re evaluation."
+        });
+    }
+};
+
+// DELETE ASSIGNMENT.
+export const deleteAssignment = async (req, res) => {
+    try {
+        const assignmentId = req.params.id
+
+        // Process.
+        const result = await deleteAssignmentService(assignmentId);
+
+        if (!result) {
+            return res.status(404).json({
+                status: "error",
+                code: "ASSIGNMENT_NOT_FOUND",
+                message: "assignment not found."
+            });
+        }
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "assignment was deleted.",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+  
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to delete assignment."
         });
     }
 };
