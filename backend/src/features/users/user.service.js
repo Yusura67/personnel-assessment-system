@@ -19,3 +19,24 @@ export const getAllUsersService = async (role) => {
     const [ rows ] = await pool.query(query, params);
     return rows;
 };
+
+// UPDATE USER.
+export const updateUserService = async (userId, userData) => {
+    const { fullname, email, role } = userData;
+
+    const [ result ] = await pool.query(
+        "UPDATE users SET fullname = ?, email = ?, role = ? WHERE user_id = ?",
+        [ fullname, email, role, userId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return {
+        user_id: userId,
+        fullname,
+        email,
+        role
+    };
+};
