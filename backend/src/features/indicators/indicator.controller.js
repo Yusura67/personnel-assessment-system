@@ -1,6 +1,6 @@
 // src/features/indicators/indicator.controller.js
 // IMPORT MODULE.
-import { createTopicService, createIndicatorService, getTopicWithIndicatorsService } from "./indicator.service.js";
+import { createTopicService, createIndicatorService, getTopicWithIndicatorsService, deleteTopicService, deleteIndicatorService } from "./indicator.service.js";
 
 // CREATE TOPIC.
 export const createTopic = async (req, res) => {
@@ -93,6 +93,76 @@ export const getTopicsWithIndicators = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to fetch topics and indicators."
+        });
+    }
+};
+
+// DELETE TOPIC.
+export const deleteTopic = async (req, res) => {
+    try {
+        const  topicId = req.params.id;
+
+        // Process.
+        const result = await deleteTopicService(topicId);
+
+        // Validate.
+        if (!result) {
+            return res.status(404).json({
+                status: "error",
+                code: "TOPIC_NOT_FOUND",
+                message: "topic not found."
+            });
+        }
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Topic was deleted.",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to delete topic."
+        });
+    }
+};
+
+// DELETE INDICATOR.
+export const deleteIndicator = async (req, res) => {
+    try {
+        const  indicatorId = req.params.id;
+
+        // Process.
+        const result = await deleteIndicatorService(indicatorId);
+
+        // Validate.
+        if (!result) {
+            return res.status(404).json({
+                status: "error",
+                code: "INDICATOR_NOT_FOUND",
+                message: "indicator not found."
+            });
+        }
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Indicator was deleted.",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to delete indicator."
         });
     }
 };

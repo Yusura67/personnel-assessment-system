@@ -60,4 +60,29 @@ export const getTopicWithIndicatorsService = async (periodId) => {
 };
 
 // DELETE TOPIC.
+export const deleteTopicService = async (topicId) => {
+    const [ result ] = await pool.query(
+        'DELETE FROM topic WHERE topic_id = ?',
+        [ topicId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return true;
+};
+
 // DELETE INDICATOR.
+export const deleteIndicatorService = async (indicatorId) => {
+    const [ result ] = await pool.query(
+        'DELETE FROM indicator WHERE indicator_id = ?',
+        [ indicatorId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return true;
+}
