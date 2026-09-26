@@ -37,5 +37,22 @@ export const getAssignmentByPeriodService = async (periodId) => {
 };
 
 // GET MY EVALUATEE.
+export const getMyEvaluateeService = async (evaluatorId, periodId) => {
+    const [ rows ] = await pool.query(
+        'SELECT a.assignment_id, a.evaluatee_id, a.status, ' +
+        'u.fullname AS evaluatee_name, ' +
+        'COALESCE(SUM(ed.self_score), 0) AS total_self_score, ' +
+        'COUNT(ed.data_id) AS submitted_count ' +
+        'FROM assignment a ' +
+        'JOIN users u ON a.evaluatee_id = u.user_id ' +
+        'LEFT JOIN evaluatee_data ed ON a.evaluatee_id = ed.evaluatee_id ' +
+        'WHERE a.evaluator_id = ? AND a.period_id = ? ' +
+        'GROUP BY a.assignment_id, a.evaluatee_id, a.status, u.fullname, u.email ' +
+        'ORDER BY a.assignment_id DESC',
+        [ evaluatorId, periodId ]
+    );
+    return rows;
+};
+
 // REQUEST RE EVALUATION.
 // DELETE ASSIGNMENT.
