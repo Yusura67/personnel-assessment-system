@@ -1,6 +1,6 @@
 // src/features/indicators/indicator.controller.js
 // IMPORT MODULE.
-import { createTopicService, createIndicatorService } from "./indicator.service.js";
+import { createTopicService, createIndicatorService, getTopicWithIndicatorsService } from "./indicator.service.js";
 
 // CREATE TOPIC.
 export const createTopic = async (req, res) => {
@@ -67,6 +67,32 @@ export const createIndicator = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to create indicator."
+        });
+    }
+};
+
+// GET TOPICS WITH INDICATORS.
+export const getTopicsWithIndicators = async (req, res) => {
+    try {
+        const periodId = req.params.id;
+
+        // Process.
+        const result = await getTopicWithIndicatorsService(periodId);
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Topics and Indicators is Fetched!",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to fetch topics and indicators."
         });
     }
 };

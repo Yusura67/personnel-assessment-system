@@ -39,5 +39,25 @@ export const createIndicatorService = async (indicatorData) => {
 };
 
 // GET TOPICS WITH INDICATORS.
+export const getTopicWithIndicatorsService = async (periodId) => {
+    const [ topics ] = await pool.query(
+        'SELECT * FROM topic WHERE period_id = ? ORDER BY topic_id ASC',
+        [ periodId ]
+    );
+
+    const [ indicators ] = await pool.query(
+        'SELECT * FROM indicators WHERE period_id = ? ORDER BY indicator_id ASC',
+        [ periodId ]
+    );
+
+    const groupedData = topics.map(topic => {
+        return {
+            ...topic,
+            indicators: indicators.filter(ind => ind.topic_id === topic.topic_id)
+        };
+    });
+    return groupedData;
+};
+
 // DELETE TOPIC.
 // DELETE INDICATOR.
