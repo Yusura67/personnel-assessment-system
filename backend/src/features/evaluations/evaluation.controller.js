@@ -1,6 +1,6 @@
 // src/features/evaluations/evaluation.controller.js
 // IMPORT MODULE.
-import { saveSelfAssessmentService, saveEvaluatorScoreService } from "./evaluation.service.js";
+import { saveSelfAssessmentService, saveEvaluatorScoreService, signEvaluationService } from "./evaluation.service.js";
 
 // SAVE SELF ASSIGNMENT.
 export const saveSelfAssessment = async (req, res) => {
@@ -76,6 +76,49 @@ export const saveEvaluatorScore = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to save evaluator score."
+        });
+    }
+};
+
+// SIGN EVALUATION.
+export const signEvaluation = async (req, res) => {
+    try {
+        const { assignment_id, signature_path } = req.body;
+
+        if (!assignment_id || !signature_path) {
+            return res.status(400).json({
+                status: "error",
+                code: "INVALID_DATA",
+                message: "assignment_id and signature_path is required."
+            });
+        }
+
+        // Process.
+        const result = await signEvaluationService(req.body);
+
+        if(!result) {
+            return res.status(404).json({
+                status: "error",
+                code: "ASSIGNMENT_NOT_FOUND",
+                message: "assignment not found."
+            });
+        }
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Sign Evaluation!",
+            data: result
+        });
+        
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+  
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to sign evaluation."
         });
     }
 };

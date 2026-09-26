@@ -62,5 +62,25 @@ export const saveEvaluatorScoreService = async (scoreData) => {
 };
 
 // SIGN EVALUATION.
+export const signEvaluationService = async (assignmentData) => {
+    const { assignment_id, signature_path, overall_comment } = assignmentData
+
+    const [ result ] = await pool.query(
+        "UPDATE assignment SET signature_path = ?, overall_comment = ?, status = 'completed' WHERE assignment_id = ?",
+        [ signature_path, overall_comment || null, assignment_id ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return {
+        assignment_id,
+        signature_path,
+        overall_comment,
+        status: 'completed'
+    };
+};
+
 // CANCLE SIGNATURE.
 // GET SELF ASSIGNMENT DEAIL.

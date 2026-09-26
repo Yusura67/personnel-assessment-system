@@ -11,7 +11,7 @@ const router = express.Router();
 // ROUTES.
 router.post('/self-assessments', verifyToken, isEvaluatee, saveSelfAssessment);
 router.post('/score', verifyToken, isEvaluator, saveEvaluatorScore);
-// router.post('/sign', verifyToken, isEvaluator, signEvaluation);
+router.post('/sign', verifyToken, isEvaluator, signEvaluation);
 // router.put('/cancle-sign/:id', verifyToken, isEvaluator, cancleSignature);
 // router.get('/self-assessments/:evaluateeId/period/:periodId', verifyToken, getSelfAssessmentDetail);
 
