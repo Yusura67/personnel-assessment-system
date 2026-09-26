@@ -4,7 +4,7 @@ import express from 'express';
 import { verifyToken } from '../../middlewares/verifyToken.js';
 import { isAdmin } from '../../middlewares/checkRole.js';
 
-import { getAllUsers, updateUser } from './user.controller.js';
+import { getAllUsers, updateUser, deleteUser } from './user.controller.js';
 
 // INITIALIZE ROUTER.
 const router = express.Router();
@@ -12,7 +12,7 @@ const router = express.Router();
 // ROUTES.
 router.get('/', verifyToken, isAdmin, getAllUsers);
 router.put('/:id', verifyToken, isAdmin, updateUser);
-// router.delete('/:id', verifyToken, isAdmin, deleteUser);
+router.delete('/:id', verifyToken, isAdmin, deleteUser);
 
 // EXPORT ROUTER.
 export default router;

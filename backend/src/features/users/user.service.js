@@ -40,3 +40,17 @@ export const updateUserService = async (userId, userData) => {
         role
     };
 };
+
+// DELETE USER.
+export const deleteUserService = async (userId) => {
+    const [ result ] = await pool.query(
+        'DELETE FROM users WHERE user_id = ?',
+        [ userId ]
+    );
+
+    if (result.affectedRows === 0) {
+        return null;
+    }
+
+    return true;
+};
