@@ -15,6 +15,7 @@ import indicatorRoutes from './features/indicators/indicator.router.js';
 import userRoutes from './features/users/user.route.js';
 import assignmentRoutes from './features/assignments/assignment.route.js';
 import evaluationRoutes from './features/evaluations/evaluation.route.js';
+import uploadRoutes from './features/uploads/upload.route.js';
 
 // CONFIGURATION & VARIABLE.
 const app = express();
@@ -32,7 +33,7 @@ app.use('/api/indicators', indicatorRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/evaluations', evaluationRoutes);
-// app.use('/api/uploads', uploadRoutes);
+app.use('/api/uploads', uploadRoutes);
 // app.use('/api/reports', reportRoutes);
 
 // ERROR HANDLER.
