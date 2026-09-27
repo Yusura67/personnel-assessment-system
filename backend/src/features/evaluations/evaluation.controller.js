@@ -1,6 +1,6 @@
 // src/features/evaluations/evaluation.controller.js
 // IMPORT MODULE.
-import { saveSelfAssessmentService, saveEvaluatorScoreService, signEvaluationService, cancleSignatureService } from "./evaluation.service.js";
+import { saveSelfAssessmentService, saveEvaluatorScoreService, signEvaluationService, cancelSignatureService, getSelfAssessmentDetailService, cancelSignatureService } from "./evaluation.service.js";
 
 // SAVE SELF ASSIGNMENT.
 export const saveSelfAssessment = async (req, res) => {
@@ -124,12 +124,12 @@ export const signEvaluation = async (req, res) => {
 };
 
 // CANCLE SIGNATURE.
-export const cancleSignature = async (req, res) => {
+export const cancelSignature = async (req, res) => {
     try {
         const assignmentId = req.params.id;
 
         // Process.
-        const result = await cancleSignatureService(assignmentId);
+        const result = await cancelSignatureService(assignmentId);
 
         if(!result) {
             return res.status(404).json({
@@ -154,6 +154,33 @@ export const cancleSignature = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to cancle signature."
+        });
+    }
+};
+
+// GET SELF ASSESSMENT DETAIL.
+export const getSelfAssessmentDetail = async (req, res) => {
+    try {
+        const { evaluateeId, periodId } = req.params
+
+        // Process.
+        const result = await getSelfAssignmentDetailService(evaluateeId, periodId);
+
+        // Return Result.
+        return res.status(200).json({
+            status: "success",
+            message: "Self Assignment Detail is Fetched.",
+            data: result
+        });
+
+    } catch(error) {
+        // ERROR HANDLING.
+        console.error("SYSTEM ERROR: ", error);
+  
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to get assignment detail."
         });
     }
 };

@@ -82,8 +82,8 @@ export const signEvaluationService = async (assignmentData) => {
     };
 };
 
-// CANCLE SIGNATURE.
-export const cancleSignatureService = async (assignmentId) => {
+// CANCEL SIGNATURE.
+export const cancelSignatureService = async (assignmentId) => {
     const [ result ] = await pool.query(
         "UPDATE assignment SET signature_path = NULL, overall_comment = NULL, status = 'evaluating' WHERE assignment_id = ?",
         [ assignmentId ]
@@ -96,4 +96,16 @@ export const cancleSignatureService = async (assignmentId) => {
     return result;
 };
 
-// GET SELF ASSIGNMENT DEAIL.
+// GET SELF ASSESSMENT DETAIL.
+export const getSelfAssessmentDetailService = async (evaluateeId, periodId) => {
+    const [ rows ] = await pool.query(
+        'SELECT ed.data_id, ed.indicator_id, i.indicator_name, i.description, i.weight, i.eval_type, t.topic_name, ed.data_content, ed.self_score ' +
+        'FROM evaluatee_data ed ' +
+        'JOIN indicator i ON ed.indicator_id = i.indicator_id ' +
+        'JOIN topic t ON i.topic_id = t.topic_id ' +
+        'WHERE ed.evaluatee_id = ? AND i.period_id = ? ' +
+        'ORDER BY t.topic_id, i.indicator_id',
+        [ evaluateeId, periodId ]
+    );
+    return rows;
+};
