@@ -46,7 +46,7 @@ export const getTopicWithIndicatorsService = async (periodId) => {
     );
 
     const [ indicators ] = await pool.query(
-        'SELECT * FROM indicators WHERE period_id = ? ORDER BY indicator_id ASC',
+        'SELECT * FROM indicator WHERE period_id = ? ORDER BY indicator_id ASC',
         [ periodId ]
     );
 
