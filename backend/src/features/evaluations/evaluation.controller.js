@@ -1,6 +1,6 @@
 // src/features/evaluations/evaluation.controller.js
 // IMPORT MODULE.
-import { saveSelfAssessmentService, saveEvaluatorScoreService, signEvaluationService, cancelSignatureService, getSelfAssessmentDetailService, cancelSignatureService } from "./evaluation.service.js";
+import { saveSelfAssessmentService, saveEvaluatorScoreService, signEvaluationService, cancelSignatureService, getSelfAssessmentDetailService } from "./evaluation.service.js";
 
 // SAVE SELF ASSIGNMENT.
 export const saveSelfAssessment = async (req, res) => {
