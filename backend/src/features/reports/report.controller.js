@@ -1,0 +1,34 @@
+// src/features/reports/report.controller.js
+import { 
+    getOverallStatisticsService
+} from './report.service.js';
+
+// GET OVERALL STATISTICS.
+export const getOverallStatistics = async (req, res) => {
+    try {
+        const { periodId } = req.params;
+
+        if (!periodId) {
+            return res.status(400).json({
+                status: "error",
+                code: "MISSING_PARAMETER",
+                message: "periodId is required."
+            });
+        }
+
+        const result = await getOverallStatisticsService(periodId);
+
+        return res.status(200).json({
+            status: "success",
+            message: "Overall statistics fetched successfully.",
+            data: result
+        });
+    } catch (error) {
+        console.error("System Error in getOverallStatistics: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to fetch statistics."
+        });
+    }
+};
