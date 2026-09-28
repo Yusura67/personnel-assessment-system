@@ -3,7 +3,8 @@ import {
     getOverallStatisticsService,
     getProgressService,
     getEvaluationResultService,
-    exportEvaluationService
+    exportEvaluationService,
+    getIndividualReportService
 } from './report.service.js';
 
 // GET OVERALL STATISTICS.
@@ -131,6 +132,44 @@ export const exportEvaluation = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to export evaluation data."
+        });
+    }
+};
+
+// GET INDIVIDUAL REPORT.
+export const getIndividualReport = async (req, res) => {
+    try {
+        const { evaluateeId, periodId } = req.params;
+
+        if (!evaluateeId || !periodId) {
+            return res.status(400).json({
+                status: "error",
+                code: "MISSING_PARAMETER",
+                message: "evaluateeId and periodId are required."
+            });
+        }
+
+        const result = await getIndividualReportService(evaluateeId, periodId);
+
+        if (!result.evaluatee) {
+            return res.status(404).json({
+                status: "error",
+                code: "NOT_FOUND",
+                message: "Evaluatee not found."
+            });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            message: "Individual evaluation report fetched successfully.",
+            data: result
+        });
+    } catch (error) {
+        console.error("System Error in getIndividualReport: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to fetch individual report."
         });
     }
 };

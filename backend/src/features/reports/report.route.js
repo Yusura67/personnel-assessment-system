@@ -8,7 +8,8 @@ import {
     getOverallStatistics,
     getProgress,
     getEvaluationResult,
-    exportEvaluation
+    exportEvaluation,
+    getIndividualReport
 } from './report.controller.js';
 
 // INITIALIZATION ROUTER.
@@ -18,6 +19,7 @@ const router = express.Router();
 router.get('/statistics/period/:periodId', verifyToken, isAdmin, getOverallStatistics);
 router.get('/progress/period/:periodId', verifyToken, getProgress);
 router.get('/results/assignment/:assignmentId', verifyToken, getEvaluationResult);
+router.get('/individual/:evaluateeId/period/:periodId', verifyToken, isAdmin, getIndividualReport);
 router.get('/export/period/:periodId', verifyToken, exportEvaluation);
 
 // EXPORT ROUTER.

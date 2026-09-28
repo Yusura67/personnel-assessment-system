@@ -98,3 +98,70 @@ export const exportEvaluationService = async (evaluateeId, periodId) => {
     );
     return rows;
 };
+
+// GET INDIVIDUAL REPORT.
+export const getIndividualReportService = async (evaluateeId, periodId) => {
+    const [userRows] = await pool.query(
+        `SELECT user_id, username, fullname, email, role FROM users WHERE user_id = ?`,
+        [evaluateeId]
+    );
+
+    const [indicatorRows] = await pool.query(
+        `SELECT 
+            t.topic_name,
+            i.indicator_id,
+            i.indicator_name,
+            i.description,
+            i.weight,
+            i.eval_type,
+            COALESCE(ed.data_content, '') AS self_data_content,
+            COALESCE(ed.self_score, 0) AS self_score,
+            ROUND(AVG(s.score), 2) AS avg_evaluator_score,
+            COUNT(DISTINCT a.assignment_id) AS evaluator_count
+         FROM indicator i
+         JOIN topic t ON i.topic_id = t.topic_id
+         LEFT JOIN evaluatee_data ed ON i.indicator_id = ed.indicator_id AND ed.evaluatee_id = ?
+         LEFT JOIN assignment a ON a.evaluatee_id = ? AND a.period_id = ? AND a.status = 'completed'
+         LEFT JOIN score s ON s.assignment_id = a.assignment_id AND s.indicator_id = i.indicator_id
+         WHERE i.period_id = ?
+         GROUP BY t.topic_name, i.indicator_id, i.indicator_name, i.description, i.weight, i.eval_type, ed.data_content, ed.self_score
+         ORDER BY t.topic_id, i.indicator_id`,
+        [evaluateeId, evaluateeId, periodId, periodId]
+    );
+
+    const [evaluatorRows] = await pool.query(
+        `SELECT 
+            a.assignment_id,
+            a.role AS evaluator_role,
+            a.status,
+            a.overall_comment,
+            a.signature_path,
+            u.fullname AS evaluator_name,
+            ROUND(SUM(s.score * i.weight) / NULLIF(SUM(i.weight), 0), 2) AS weighted_average_score,
+            COUNT(s.score_id) AS total_scored_items
+         FROM assignment a
+         JOIN users u ON a.evaluator_id = u.user_id
+         LEFT JOIN score s ON a.assignment_id = s.assignment_id
+         LEFT JOIN indicator i ON s.indicator_id = i.indicator_id
+         WHERE a.evaluatee_id = ? AND a.period_id = ?
+         GROUP BY a.assignment_id, a.role, a.status, a.overall_comment, a.signature_path, u.fullname
+         ORDER BY a.assignment_id`,
+        [evaluateeId, periodId]
+    );
+
+    const totalWeightedAvg = evaluatorRows.length > 0
+        ? (evaluatorRows.reduce((sum, r) => sum + (parseFloat(r.weighted_average_score) || 0), 0) / evaluatorRows.length).toFixed(2)
+        : 0;
+
+    return {
+        evaluatee: userRows[0] || null,
+        period_id: periodId,
+        summary: {
+            total_evaluators: evaluatorRows.length,
+            completed_evaluators: evaluatorRows.filter(r => r.status === 'completed').length,
+            overall_weighted_average: parseFloat(totalWeightedAvg)
+        },
+        indicators: indicatorRows,
+        evaluators: evaluatorRows
+    };
+};
