@@ -2,7 +2,8 @@
 import { 
     getOverallStatisticsService,
     getProgressService,
-    getEvaluationResultService
+    getEvaluationResultService,
+    exportEvaluationService
 } from './report.service.js';
 
 // GET OVERALL STATISTICS.
@@ -93,6 +94,43 @@ export const getEvaluationResult = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to fetch evaluation result."
+        });
+    }
+};
+
+// EXPORT EVALUATION.
+export const exportEvaluation = async (req, res) => {
+    try {
+        const { periodId } = req.params;
+        const evaluateeId = req.query.evaluateeId || req.user.user_id;
+
+        if (!periodId) {
+            return res.status(400).json({
+                status: "error",
+                code: "MISSING_PARAMETER",
+                message: "periodId is required."
+            });
+        }
+
+        const rows = await exportEvaluationService(evaluateeId, periodId);
+
+        // สร้าง CSV
+        const header = 'Topic,Indicator,Description,Weight,EvalType,DataContent,SelfScore,EvaluatorScore,EvaluatorComment,EvaluatorName';
+        const csvRows = rows.map(r => 
+            `"${(r.topic_name || '').replace(/"/g, '""')}","${(r.indicator_name || '').replace(/"/g, '""')}","${(r.indicator_description || '').replace(/"/g, '""')}",${r.weight},"${r.eval_type}","${(r.data_content || '').replace(/"/g, '""')}",${r.self_score},${r.evaluator_score},"${(r.evaluator_comment || '').replace(/"/g, '""')}","${(r.evaluator_name || '').replace(/"/g, '""')}"`
+        );
+        const csv = [header, ...csvRows].join('\n');
+
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="evaluation_export_${periodId}.csv"`);
+        return res.status(200).send('\uFEFF' + csv);
+
+    } catch (error) {
+        console.error("System Error in exportEvaluation: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to export evaluation data."
         });
     }
 };

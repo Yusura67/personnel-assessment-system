@@ -71,3 +71,30 @@ export const getEvaluationResultService = async (assignmentId) => {
     );
     return rows;
 };
+
+// EXPORT EVALUATION.
+export const exportEvaluationService = async (evaluateeId, periodId) => {
+    const [rows] = await pool.query(
+        `SELECT 
+            t.topic_name,
+            i.indicator_name,
+            i.description AS indicator_description,
+            i.weight,
+            i.eval_type,
+            COALESCE(ed.data_content, '') AS data_content,
+            COALESCE(ed.self_score, 0) AS self_score,
+            COALESCE(s.score, 0) AS evaluator_score,
+            COALESCE(s.comment, '') AS evaluator_comment,
+            COALESCE(u.fullname, '') AS evaluator_name
+         FROM indicator i
+         JOIN topic t ON i.topic_id = t.topic_id
+         LEFT JOIN evaluatee_data ed ON i.indicator_id = ed.indicator_id AND ed.evaluatee_id = ?
+         LEFT JOIN assignment a ON a.evaluatee_id = ? AND a.period_id = i.period_id AND a.status = 'completed'
+         LEFT JOIN score s ON s.assignment_id = a.assignment_id AND s.indicator_id = i.indicator_id
+         LEFT JOIN users u ON a.evaluator_id = u.user_id
+         WHERE i.period_id = ?
+         ORDER BY t.topic_id, i.indicator_id`,
+        [evaluateeId, evaluateeId, periodId]
+    );
+    return rows;
+};
