@@ -1,7 +1,8 @@
 // src/features/reports/report.controller.js
 import { 
     getOverallStatisticsService,
-    getProgressService
+    getProgressService,
+    getEvaluationResultService
 } from './report.service.js';
 
 // GET OVERALL STATISTICS.
@@ -62,6 +63,36 @@ export const getProgress = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to fetch progress."
+        });
+    }
+};
+
+// GET EVALUATION RESULT.
+export const getEvaluationResult = async (req, res) => {
+    try {
+        const { assignmentId } = req.params;
+
+        if (!assignmentId) {
+            return res.status(400).json({
+                status: "error",
+                code: "MISSING_PARAMETER",
+                message: "assignmentId is required."
+            });
+        }
+
+        const result = await getEvaluationResultService(assignmentId);
+
+        return res.status(200).json({
+            status: "success",
+            message: "Evaluation results fetched successfully.",
+            data: result
+        });
+    } catch (error) {
+        console.error("System Error in getEvaluationResult: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to fetch evaluation result."
         });
     }
 };

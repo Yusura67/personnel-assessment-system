@@ -55,3 +55,19 @@ export const getProgressService = async (periodId, evaluateeId, evaluatorId) => 
     const [rows] = await pool.query(query, params);
     return rows;
 };
+
+// GET EVALUATION RESULT.
+export const getEvaluationResultService = async (assignmentId) => {
+    const [rows] = await pool.query(
+        `SELECT 
+            s.score_id,
+            i.indicator_name,
+            s.score,
+            s.comment
+         FROM score s
+         JOIN indicator i ON s.indicator_id = i.indicator_id
+         WHERE s.assignment_id = ?`,
+        [assignmentId]
+    );
+    return rows;
+};
