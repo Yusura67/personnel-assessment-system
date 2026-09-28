@@ -5,7 +5,8 @@ import { verifyToken } from '../../middlewares/verifyToken.js';
 import { isAdmin } from '../../middlewares/checkRole.js';
 
 import { 
-    getOverallStatistics
+    getOverallStatistics,
+    getProgress
 } from './report.controller.js';
 
 // INITIALIZATION ROUTER.
@@ -13,6 +14,7 @@ const router = express.Router();
 
 // ROUTES.
 router.get('/statistics/period/:periodId', verifyToken, isAdmin, getOverallStatistics);
+router.get('/progress/period/:periodId', verifyToken, getProgress);
 
 // EXPORT ROUTER.
 export default router;

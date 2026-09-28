@@ -21,3 +21,37 @@ export const getOverallStatisticsService = async (periodId) => {
     );
     return rows;
 };
+
+// GET PROGRESS.
+export const getProgressService = async (periodId, evaluateeId, evaluatorId) => {
+    let query = `
+        SELECT 
+            a.assignment_id,
+            a.evaluatee_id,
+            a.evaluator_id,
+            a.status,
+            a.role AS evaluator_role,
+            e.fullname AS evaluator_name,
+            ee.fullname AS evaluatee_name
+        FROM assignment a
+        JOIN users e ON a.evaluator_id = e.user_id
+        JOIN users ee ON a.evaluatee_id = ee.user_id
+        WHERE a.period_id = ?
+    `;
+    const params = [periodId];
+
+    if (evaluateeId) {
+        query += ` AND a.evaluatee_id = ?`;
+        params.push(evaluateeId);
+    }
+
+    if (evaluatorId) {
+        query += ` AND a.evaluator_id = ?`;
+        params.push(evaluatorId);
+    }
+
+    query += ` ORDER BY a.assignment_id DESC`;
+
+    const [rows] = await pool.query(query, params);
+    return rows;
+};

@@ -1,6 +1,7 @@
 // src/features/reports/report.controller.js
 import { 
-    getOverallStatisticsService
+    getOverallStatisticsService,
+    getProgressService
 } from './report.service.js';
 
 // GET OVERALL STATISTICS.
@@ -29,6 +30,38 @@ export const getOverallStatistics = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Failed to fetch statistics."
+        });
+    }
+};
+
+// GET PROGRESS.
+export const getProgress = async (req, res) => {
+    try {
+        const { periodId } = req.params;
+        const evaluateeId = req.query.evaluateeId;
+        const evaluatorId = req.query.evaluatorId;
+
+        if (!periodId) {
+            return res.status(400).json({
+                status: "error",
+                code: "MISSING_PARAMETER",
+                message: "periodId is required."
+            });
+        }
+
+        const result = await getProgressService(periodId, evaluateeId, evaluatorId);
+
+        return res.status(200).json({
+            status: "success",
+            message: "Progress fetched successfully.",
+            data: result
+        });
+    } catch (error) {
+        console.error("System Error in getProgress: ", error);
+        return res.status(500).json({
+            status: "error",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to fetch progress."
         });
     }
 };
