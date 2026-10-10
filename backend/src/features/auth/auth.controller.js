@@ -1,6 +1,6 @@
 // src/features/auth/auth.controller.js
 // IMPORT MOUDLE.
-import { registerService, loginService } from "./auth.service.js";
+import { registerService, loginService, changePasswordService } from "./auth.service.js";
 
 // REGISTER.
 export const register = async (req, res) => {
@@ -95,6 +95,66 @@ export const login = async (req, res) => {
             status: "error",
             code: "INTERNAL_SERVER_ERROR",
             message: "Something went wrong on the server."
+        });
+    }
+};
+
+// CHANGE PASSWORD.
+export const changePassword = async (req, res) => {
+    try {
+        // Get data from user.
+        const userId = req.user.user_id;
+        const { oldPassword, newPassword } = req.body;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({
+                status: 'error',
+                code: 'INVALID_DATA',
+                message: 'Old password and new password is required.'
+            });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({
+                status: 'error',
+                code: 'INVALID_DATA',
+                message: 'new password must be at least 8 characters.'
+            });
+        }
+
+        // Process.
+        const result = await changePasswordService(userId, oldPassword, newPassword);
+
+        // RETURN RESULT.
+        return res.status(200).json({
+            status: 'success',
+            message: 'Password is changed!',
+            data: result
+        });
+        
+    } catch(error) {
+        // ERROR HANDLING.
+        if (error instanceof Error) {
+            if (error.message === 'USER_NOT_FOUND') {
+                return res.status(404).json({
+                    status: 'error',
+                    code: 'INVALID_CREDENTIALS',
+                    message: 'Invalid credentials.'
+                });
+            } else if (error.message === 'INVALID_PASSWORD') {
+                return res.status(400).json({
+                    status: 'error',
+                    code: 'INVALID_CREDENTIALS',
+                    message: 'Invalid credentials.'
+                });
+            }
+        }
+
+        console.error('SYSTEM ERROR: ', error);
+        return res.status(500).json({
+            status: 'error',
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to change password.'
         });
     }
 };

@@ -2,7 +2,7 @@
 // IMPORT MODULES.
 import { pool } from '../../config/db.js';
 import { CONFIG } from '../../config/env.js';
-import bcrypt from 'bcrypt';
+import bcrypt, { hash } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 // MAIN BUSINESS LOGIC.
@@ -71,4 +71,38 @@ export const loginService = async (username, password) => {
         token,
         user: payload
     };
+};
+
+// CHANGE PASSWORD LOGIC.
+export const changePasswordService = async (userId, oldPassword, newPassword) => {
+    // Check user exists.
+    const [ rows ] = await pool.query(
+        "SELECT * FROM users WHERE user_id = ?",
+        [ userId ]
+    );
+    const user = rows[0];
+
+    if (!user) {
+        throw new Error("USER_NOT_FOUND");
+    }
+
+    // Compare old password.
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) {
+        throw new Error("INVALID_PASSWORD");
+    }
+
+    // Hash newPassword with bcrypt.
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // UPDATE password.
+    await pool.query(
+        "UPDATE users SET password = ?, must_change_password = 0 WHERE user_id = ?",
+        [ hashedPassword, userId ]
+    );
+
+    // RETURN RESULT.
+    return { user_id: userId };
 };
